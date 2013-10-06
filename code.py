@@ -3,8 +3,10 @@ from web import form
 import time
 import datetime
 import os.path, sys
-sys.path.append(os.path.dirname(__file__))
 
+
+sys.path.append(os.path.dirname(__file__))
+import model
 
 render = web.template.render('/home/ciaran/Documents/Dropbox/web_design/active/gone/templates/')
 
@@ -85,7 +87,7 @@ class article(BaseController):
     def GET(self):
         i = web.input(article_id=1)
         article_id = i.article_id
-        post = db.select('posts', where='id = $article_id', vars =  locals())[0]
+        post = model.PostModel.load(article_id)
         page_content = render.article(post)
         return self.render_page(page_content)
     

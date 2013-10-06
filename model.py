@@ -8,7 +8,6 @@ class BaseModel(object):
 	_table_name = None
 	_model_name = None
 	
-	_fields = []
 	
 	def __init__(self, **kwargs):
 		for fieldname in self.fields:

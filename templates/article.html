@@ -1,10 +1,10 @@
 $def with (post)
 
-<h3>$post.title</h3>
+<h3>$post.fields['title'].value</h3>
 
-<em>$post.time_published</em>
+<em>$post.fields['time_published'].value</em>
 <article>
-	$post.article
+	$post.fields['article'].value
 
 </article>
-<a href="/edit_article?id=$post.id">Edit</a>
+<a href="/edit_article?id=$post.fields['id'].value">Edit</a>
