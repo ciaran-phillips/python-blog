@@ -1,0 +1,14 @@
+$def with (**kwargs)
+
+<form name="article" method="POST">
+
+$if 'title' in kwargs:
+	hello
+	$kwargs['title']
+	
+$if 'form_html' in kwargs:
+	$:kwargs['form_html']
+
+<input type="submit" />
+
+</form>

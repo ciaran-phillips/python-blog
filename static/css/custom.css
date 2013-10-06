@@ -1,0 +1,18 @@
+body {
+	font-family:'Georgia', 'Serif';
+	padding-top:30px;
+}
+h1 {
+	font-size:2em;
+	text-align:center;
+}
+header h2 {
+	font-size:1.4em;
+	text-align:center;
+	padding:20px 0;
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+#wrapper {
+	max-width:800px;
+}
