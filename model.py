@@ -11,9 +11,9 @@ class BaseModel(object):
 	_fields = []
 	
 	def __init__(self, **kwargs):
-		for field in self.fields:
-			if field.name in kwargs:
-				field.value = kwargs[field.name]
+		for fieldname in self.fields:
+			if fieldname in kwargs:
+				self.fields[fieldname].value = kwargs[fieldname]
 
 	def delete(self,id):
 		pass
@@ -43,23 +43,23 @@ class BaseModel(object):
 		
 	
 	def save(self):
-		
+		pass
 
 class PostModel(BaseModel):
 	_table_name = 'posts'
 	_model_name = 'Posts'
 	
 	def __init__(self, **kwargs):
-		self.fields = [
-			Field('title',''),
-			Field('id', None),
-			Field('article',''),
-			Field('short_url',''),
-			Field('published',False),
-			Field('time_published',''),
-			Field('time_modified',''),
-			Field('time_created','')
-		]
+		self.fields = {
+			'title' : Field('title',''),
+			'id' : Field('id', None),
+			'article' : Field('article',''),
+			'short_url' : Field('short_url',''),
+			'published' : Field('published',False),
+			'time_published' : Field('time_published',''),
+			'time_modified' : Field('time_modified',''),
+			'time_created' : Field('time_created','')
+		}
 		super(PostModel,self).__init__(**kwargs)
 		
 		
