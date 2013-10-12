@@ -14,7 +14,7 @@ class BaseModel(object):
 	
 	def __init__(self, **kwargs):
 		
-		self.fields['id'] = Field('id', None)
+		self.fields['id'] = Field('id', value=None, field_type='Hidden')
 		self.update(**kwargs)
 
 	def delete(self,id):
@@ -90,7 +90,7 @@ class PostModel(BaseModel):
 	def save(self):
 		self.fields['time_modified'].value = time.time()
 		if not self.fields['id'].value:
-			self.fields['time_created'] = time.time()
+			self.fields['time_created'].value = time.time()
 		super(PostModel,self).save()
 		
 	def publish(self):
@@ -108,6 +108,8 @@ def CategoryModel(BaseModel):
 			'name' : Field('name', label = 'Category Name'),
 			'description' : Field('description', label = 'Description')
 		}
+	
+	
 	
 	
 class UserModel:
