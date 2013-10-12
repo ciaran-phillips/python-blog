@@ -100,14 +100,15 @@ class PostModel(BaseModel):
 		pass
 
 
-def CategoryModel(BaseModel):
+class CategoryModel(BaseModel):
 	_table_name = 'categories'
 	
 	def __init__(self, **kwargs):
 		self.fields = {
 			'name' : Field('name', label = 'Category Name'),
-			'description' : Field('description', label = 'Description')
+			'description' : Field('description', label = 'Description', field_type="Textarea")
 		}
+		super(CategoryModel,self).__init__(**kwargs)
 	
 	
 	

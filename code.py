@@ -13,6 +13,7 @@ urls = (
     "/", "hello",
     "/add", "add",
     "/edit", "edit",
+    "/edit_category", "edit_category",
     "/list_posts", "list_posts",
     "/article", "article",
 )
@@ -101,6 +102,18 @@ class list_posts(BaseController):
         posts = db.select('posts',limit=4, order=" id DESC ")
         page_content =  render.list_posts(posts)
         return self.render_page(page_content)
+        
+class list_categories(BaseController):
+    def GET(self):
+        i = web.input(page=1)
+        categories = model.CategoryModel.load_group()
+
+class edit_category(BaseController):
+    def GET(self):
+        return edit_model(self, model.CategoryModel)
+    
+    def POST(self):
+        return edit_model(self, model.CategoryModel, True)
       
 class article(BaseController):
     def GET(self):
