@@ -4,6 +4,7 @@ from web import form
 
 import time
 import datetime
+import hashlib
 
 db = web.database(dbn='mysql', user='root', pw='', db='portfolio')
 
@@ -106,15 +107,29 @@ class CategoryModel(BaseModel):
 	def __init__(self, **kwargs):
 		self.fields = {
 			'name' : Field('name', label = 'Category Name'),
-			'description' : Field('description', label = 'Description', field_type="Textarea")
+			'description' : Field('description', label = 'Description', field_type="Textarea	")
 		}
 		super(CategoryModel,self).__init__(**kwargs)
 	
 	
 	
 	
-class UserModel:
+class UserModel(BaseModel):
+	_table_name = "users"
 	
+	def __init__(self, **kwargs):
+		self.fields = {
+			'firstname' : Field('firstname', label = "Firstname"),
+			'lastname' : Field('lastname', label = "Lastname"),
+			'username' : Field('username', label = "Username"),
+			'password' : Field('password', label = "Password", field_type="Password")
+		}
+		super(UserModel, self).__init__(**kwargs)
+	
+	def save(self):
+		self.fields['password'].value = hashlib.sha1(self.fields['password'].value)
+		super(UserModel, self).save()
+		
 	def delete_user(self):
 		pass
 		

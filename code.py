@@ -14,6 +14,7 @@ urls = (
     "/add", "add",
     "/edit", "edit",
     "/edit_category", "edit_category",
+    "/edit_user", "edit_user",
     "/list_posts", "list_posts",
     "/article", "article",
 )
@@ -122,6 +123,14 @@ class article(BaseController):
         post = model.PostModel.load(article_id)
         page_content = render.article(post)
         return self.render_page(page_content)
+
+
+class edit_user(BaseController):
+    def GET(self):
+        return edit_model(self, model.UserModel)
+    
+    def POST(self):
+        return edit_model(self, model.UserModel, True)
     
 
 def edit_model(controller, model_class, submit = False):
@@ -133,7 +142,6 @@ def edit_model(controller, model_class, submit = False):
     else:
         inst = model_class()
     model_form = inst.get_form()
-    
     if submit and model_form.validates():
         inst.update(**model_form.d)
         inst.save()
