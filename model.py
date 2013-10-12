@@ -100,6 +100,16 @@ class PostModel(BaseModel):
 		pass
 
 
+def CategoryModel(BaseModel):
+	_table_name = 'categories'
+	
+	def __init__(self, **kwargs):
+		self.fields = {
+			'name' : Field('name', label = 'Category Name'),
+			'description' : Field('description', label = 'Description')
+		}
+	
+	
 class UserModel:
 	
 	def delete_user(self):
