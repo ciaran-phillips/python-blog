@@ -31,6 +31,14 @@ class BaseController:
         return page
 
 
+class PostController(BaseController):
+    model_class = model.PostModel
+    
+    def __init__(self):
+        pass
+    
+    
+
 class hello(BaseController):
     def GET(self):
         name = 'Bob'
@@ -73,19 +81,46 @@ class add(BaseController):
                                 time_published = add_form.d.time_published,
                                 time_modified = time_modified)
             
+            
             new_post.save()
             form_html = add_form.render()
             page_content =  render.add(form_html=form_html)
             return self.render_page(page_content)
 
 class edit(BaseController):
+        
     def GET(self):
-        i = web.input(article_id=1)
+        i = web.input(article_id=None)
         article_id = i.article_id
-        post = model.PostModel.load(article_id)
+        if article_id:
+            post = model.PostModel.load(article_id)
+        else:
+            post = model.PostModel()
+            
         post_form = post.get_form()
         form_html = post_form.render()
-        return self.render_page(form_html)
+        page_content = render.add(form_html = form_html)
+        return self.render_page(page_content)
+    
+    def POST(self):
+        i = web.input(article_id=None)
+        article_id = i.article_id
+        post = model.PostModel.load(article_id)
+        
+        if article_id:
+            post = model.PostModel.load(article_id)
+        else:
+            post = model.PostModel()
+        
+        post_form = post.get_form()
+        if post_form.validates():
+            post.update(**post_form.d)
+            post.save()
+            form_html = post_form.render()
+            page_content = render.add(form_html = form_html)
+            
+            return self.render_page(page_content)
+            
         
 class list_posts(BaseController):
     def GET(self):

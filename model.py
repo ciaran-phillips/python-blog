@@ -2,6 +2,8 @@ import web
 from fields import Field
 from web import form
 
+import time
+import datetime
 
 db = web.database(dbn='mysql', user='root', pw='', db='portfolio')
 
@@ -11,9 +13,9 @@ class BaseModel(object):
 	
 	
 	def __init__(self, **kwargs):
-		for fieldname in self.fields:
-			if fieldname in kwargs:
-				self.fields[fieldname].value = kwargs[fieldname]
+		
+		self.fields['id'] = Field('id', None)
+		self.update(**kwargs)
 
 	def delete(self,id):
 		pass
@@ -41,7 +43,10 @@ class BaseModel(object):
 		if not value_dict['id']:
 			result = db.insert(self._table_name, **value_dict)
 		else:
-			result = db.update(self._table_name,value_dict, 'WHERE id = $id ' )
+			cons = {}
+			cons['id'] = value_dict['id']
+			del value_dict['id']
+			result = db.update(self._table_name , where = ' id = $id ', vars = cons, **value_dict )
 		
 	@classmethod
 	def get_instance(cls, db_row=None, **kwargs):
@@ -51,6 +56,11 @@ class BaseModel(object):
 			instance = cls(kwargs)
 		return instance
 			
+	
+	def update(self, **kwargs):
+		for fieldname in self.fields:
+			if fieldname in kwargs:
+				self.fields[fieldname].value = kwargs[fieldname]
 		
 	def get_form(self):
 		field_list = []
@@ -68,13 +78,12 @@ class PostModel(BaseModel):
 	def __init__(self, **kwargs):
 		self.fields = {
 			'title' : Field('title',label="Title"),
-			'id' : Field('id', None),
 			'article' : Field('article',label="Blog Content", field_type="Textarea"),
 			'short_url' : Field('short_url',label="Short URL"),
 			'published' : Field('published',value=False, label="Published",field_type="Checkbox"),
 			'time_published' : Field('time_published', label= "Time Published"),
-			'time_modified' : Field('time_modified', label="Time Modified"),
-			'time_created' : Field('time_created', label="Time Created"),
+			'time_modified' : Field('time_modified', label="Time Modified", field_type="Hidden"),
+			'time_created' : Field('time_created', label="Time Created", field_type="Hidden"),
 		}
 		super(PostModel,self).__init__(**kwargs)
 		
@@ -89,6 +98,7 @@ class PostModel(BaseModel):
 	
 	def unpublish(self):
 		pass
+
 
 class UserModel:
 	
