@@ -1,5 +1,6 @@
 import web
 from fields import Field
+from web import form
 
 
 db = web.database(dbn='mysql', user='root', pw='', db='portfolio')
@@ -31,6 +32,17 @@ class BaseModel(object):
 	def load_group(cls, conditions = "", limit = ""):
 		pass
 	
+	
+	def save(self):
+		value_dict = {}
+		for fieldname in self.fields:
+			value_dict[fieldname] = self.fields[fieldname].value
+		
+		if not value_dict['id']:
+			result = db.insert(self._table_name, **value_dict)
+		else:
+			result = db.update(self._table_name,value_dict, 'WHERE id = $id ' )
+		
 	@classmethod
 	def get_instance(cls, db_row=None, **kwargs):
 		if db_row:
@@ -40,9 +52,14 @@ class BaseModel(object):
 		return instance
 			
 		
-	
-	def save(self):
-		pass
+	def get_form(self):
+		field_list = []
+		for fieldname in self.fields:
+			input_field = self.fields[fieldname].get_form_field()
+			field_list.append(input_field)
+		model_form_class = form.Form(*field_list)
+		model_form = model_form_class()
+		return model_form
 
 class PostModel(BaseModel):
 	_table_name = 'posts'
@@ -50,24 +67,29 @@ class PostModel(BaseModel):
 	
 	def __init__(self, **kwargs):
 		self.fields = {
-			'title' : Field('title',''),
+			'title' : Field('title',label="Title"),
 			'id' : Field('id', None),
-			'article' : Field('article',''),
-			'short_url' : Field('short_url',''),
-			'published' : Field('published',False),
-			'time_published' : Field('time_published',''),
-			'time_modified' : Field('time_modified',''),
-			'time_created' : Field('time_created','')
+			'article' : Field('article',label="Blog Content", field_type="Textarea"),
+			'short_url' : Field('short_url',label="Short URL"),
+			'published' : Field('published',value=False, label="Published",field_type="Checkbox"),
+			'time_published' : Field('time_published', label= "Time Published"),
+			'time_modified' : Field('time_modified', label="Time Modified"),
+			'time_created' : Field('time_created', label="Time Created"),
 		}
 		super(PostModel,self).__init__(**kwargs)
 		
+	def save(self):
+		self.fields['time_modified'].value = time.time()
+		if not self.fields['id'].value:
+			self.fields['time_created'] = time.time()
+		super(PostModel,self).save()
 		
 	def publish(self):
 		pass
 	
 	def unpublish(self):
 		pass
-		
+
 class UserModel:
 	
 	def delete_user(self):

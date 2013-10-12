@@ -13,6 +13,7 @@ render = web.template.render('/home/ciaran/Documents/Dropbox/web_design/active/g
 urls = (
     "/", "hello",
     "/add", "add",
+    "/edit", "edit",
     "/list_posts", "list_posts",
     "/article", "article",
 )
@@ -50,9 +51,11 @@ class add(BaseController):
     def GET(self):
         add_form = add_form_class()
         form_html = add_form.render()
-        return render.add(form_html=form_html)
+        page_content = render.add(form_html=form_html)
+        return self.render_page(page_content)
         
     def POST(self):
+        
         add_form = add_form_class()
         if add_form.validates():
             time_modified = int(
@@ -63,19 +66,27 @@ class add(BaseController):
             else:
                 published = 0
             
-            db.insert('posts',
-                        title = add_form.d.title,
-                        article = add_form.d.article,
-                        published = published,
-                        short_url = add_form.d.short_url,
-                        time_published = add_form.d.time_published,
-                        time_modified = time_modified,
-                        )
+            new_post = model.PostModel(title = add_form.d.title,
+                                article = add_form.d.article,
+                                published = published,
+                                short_url = add_form.d.short_url,
+                                time_published = add_form.d.time_published,
+                                time_modified = time_modified)
+            
+            new_post.save()
             form_html = add_form.render()
             page_content =  render.add(form_html=form_html)
             return self.render_page(page_content)
 
-
+class edit(BaseController):
+    def GET(self):
+        i = web.input(article_id=1)
+        article_id = i.article_id
+        post = model.PostModel.load(article_id)
+        post_form = post.get_form()
+        form_html = post_form.render()
+        return self.render_page(form_html)
+        
 class list_posts(BaseController):
     def GET(self):
         i = web.input(page=1)
