@@ -4,7 +4,6 @@ import time
 import datetime
 import os.path, sys
 
-
 sys.path.append(os.path.dirname(__file__))
 import model
 
@@ -90,36 +89,10 @@ class add(BaseController):
 class edit(BaseController):
         
     def GET(self):
-        i = web.input(article_id=None)
-        article_id = i.article_id
-        if article_id:
-            post = model.PostModel.load(article_id)
-        else:
-            post = model.PostModel()
-            
-        post_form = post.get_form()
-        form_html = post_form.render()
-        page_content = render.add(form_html = form_html)
-        return self.render_page(page_content)
+        return edit_model(self, model.PostModel)
     
     def POST(self):
-        i = web.input(article_id=None)
-        article_id = i.article_id
-        post = model.PostModel.load(article_id)
-        
-        if article_id:
-            post = model.PostModel.load(article_id)
-        else:
-            post = model.PostModel()
-        
-        post_form = post.get_form()
-        if post_form.validates():
-            post.update(**post_form.d)
-            post.save()
-            form_html = post_form.render()
-            page_content = render.add(form_html = form_html)
-            
-            return self.render_page(page_content)
+        return edit_model(self, model.PostModel, True)
             
         
 class list_posts(BaseController):
@@ -138,5 +111,21 @@ class article(BaseController):
         return self.render_page(page_content)
     
 
+def edit_model(controller, model_class, submit = False):
+    i = web.input(id=None)
+    model_id = i.id
+    
+    if model_id:
+        inst = model_class.load(model_id)
+    else:
+        inst = model_class()
+    model_form = inst.get_form()
+    
+    if submit and model_form.validates():
+        inst.update(**model_form.d)
+        inst.save()
+    form_html = model_form.render()
+    page_content = render.add(form_html = form_html)
+    return controller.render_page(page_content)
 
 application = web.application(urls, globals()).wsgifunc()
