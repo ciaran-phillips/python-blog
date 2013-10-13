@@ -5,13 +5,14 @@ $for cat in categories:
 	<li>
 		<div>
 			<h3>
-				<a href="/article?id=$cat.id">
-				$cat.name
+				<a href="/article?id=$cat.fields['id'].value">
+							
+				$cat.fields['name'].value
 				</a>
 			</h3>
-			
+
 			<div>
-				$cat.description
+				$cat.fields['name'].value
 			</div>
 			
 		</div>
