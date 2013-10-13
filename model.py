@@ -32,8 +32,16 @@ class BaseModel(object):
 		return instance
 
 	@classmethod
-	def load_group(cls, conditions = "", limit = ""):
-		pass
+	def load_group(cls, **kwargs):
+		results = db.select(cls._table_name, **kwargs)
+		instance_array = []
+		
+		if len(results):
+			for r in results:
+				instance = cls.get_instance(db_row = r)
+				instance_array.append(instance)
+		
+		return instance_array
 	
 	
 	def save(self):

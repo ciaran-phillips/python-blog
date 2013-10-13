@@ -14,6 +14,7 @@ urls = (
     "/add", "add",
     "/edit", "edit",
     "/edit_category", "edit_category",
+    "/list_categories", "list_categories",
     "/edit_user", "edit_user",
     "/list_posts", "list_posts",
     "/article", "article",
@@ -108,18 +109,14 @@ class edit(BaseController):
         return edit_model(self, model.PostModel, True)
             
         
-class list_posts(BaseController):
+class list_posts(PostController):
     def GET(self):
-        i = web.input(page=1)
-        posts = db.select('posts',limit=4, order=" id DESC ")
-        page_content =  render.list_posts(posts)
-        return self.render_page(page_content)
+        return list_models(self, limit=4, order=" id DESC ")
         
-class list_categories(BaseController):
+class list_categories(CategoryController):
     def GET(self):
-        i = web.input(page=1)
-        categories = model.CategoryModel.load_group()
-
+        return list_models(self)
+        
 class edit_category(BaseController):
     def GET(self):
         return edit_model(self, model.CategoryModel)
@@ -155,7 +152,11 @@ def edit_model(controller, model_class, submit = False):
     page_content = render.add(form_html = form_html)
     return controller.render_page(page_content)
     
-    
+def list_models(controller, **kwargs):
+    model_class = controller.model_class
+    models = model_class.load_group(**kwargs)
+    page_content = controller.render.list(models)
+    return controller.render_page(page_content)
 
 def view(controller):
     i = web.input(id=1)
