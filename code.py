@@ -9,22 +9,22 @@ import model
 
 render = web.template.render(os.path.dirname(__file__) + '/templates/')
 
-urls = (
-    "/", "hello",
-    "/add", "add",
-    "/edit", "edit",
-    "/edit_category", "edit_category",
-    "/list_categories", "list_categories",
-    "/edit_user", "edit_user",
-    "/list_posts", "list_posts",
-    "/article", "article",
-)
+urls = []
 
 
 app = web.application(urls, globals())
 db = web.database(dbn='mysql', user='root', pw='', db='portfolio')
 
+class ActionMetaClass(type):
+    def __init__(klass, name, bases, attrs):
+        if 'url' in attrs:
+            urls.append(attrs["url"])
+            urls.append("%s.%s" % (klass.__module__, name))
+        
+        
 class BaseController:
+    __metaclass__ = ActionMetaClass
+    
     def __init__(self):
         pass
 
@@ -69,6 +69,7 @@ add_form_class = form.Form(
         )
 
 class add(BaseController):
+    url = '/add'
     def GET(self):
         add_form = add_form_class()
         form_html = add_form.render()
@@ -101,7 +102,8 @@ class add(BaseController):
             return self.render_page(page_content)
 
 class edit(BaseController):
-        
+    url = '/edit'
+    
     def GET(self):
         return edit_model(self, model.PostModel)
     
@@ -110,14 +112,17 @@ class edit(BaseController):
             
         
 class list_posts(PostController):
+    url = '/list_posts'
     def GET(self):
         return list_models(self, limit=4, order=" id DESC ")
         
 class list_categories(CategoryController):
+    url = '/list_categories'
     def GET(self):
         return list_models(self)
         
 class edit_category(BaseController):
+    url = '/edit_category'
     def GET(self):
         return edit_model(self, model.CategoryModel)
     
@@ -125,11 +130,13 @@ class edit_category(BaseController):
         return edit_model(self, model.CategoryModel, True)
       
 class article(PostController):
+    url = '/article'
     def GET(self):
         return view(self)
 
 
 class edit_user(UserController):
+    url = '/edit_user'
     def GET(self):
         return edit_model(self, model.UserModel)
     
