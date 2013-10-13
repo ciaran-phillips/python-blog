@@ -107,7 +107,7 @@ class CategoryModel(BaseModel):
 	def __init__(self, **kwargs):
 		self.fields = {
 			'name' : Field('name', label = 'Category Name'),
-			'description' : Field('description', label = 'Description', field_type="Textarea	")
+			'description' : Field('description', label = 'Description', field_type="Textarea")
 		}
 		super(CategoryModel,self).__init__(**kwargs)
 	
@@ -135,3 +135,4 @@ class UserModel(BaseModel):
 		
 	def edit_user(self):
 		pass
+

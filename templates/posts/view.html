@@ -1,0 +1,10 @@
+$def with (post)
+
+<h3>$post.fields['title'].value</h3>
+
+<em>$post.fields['time_published'].value</em>
+<article>
+	$post.fields['article'].value
+
+</article>
+<a href="/edit_article?id=$post.fields['id'].value">Edit</a>

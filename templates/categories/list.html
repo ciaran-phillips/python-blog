@@ -1,0 +1,19 @@
+$def with (categories)
+
+<ul>
+$for cat in categories:
+	<li>
+		<div>
+			<h3>
+				<a href="/article?id=$cat.id">
+				$cat.name
+				</a>
+			</h3>
+			
+			<div>
+				$cat.description
+			</div>
+			
+		</div>
+	</li>
+</ul>

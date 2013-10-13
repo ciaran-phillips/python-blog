@@ -7,7 +7,7 @@ import os.path, sys
 sys.path.append(os.path.dirname(__file__))
 import model
 
-render = web.template.render('/home/ciaran/Documents/Dropbox/web_design/active/gone/templates/')
+render = web.template.render(os.path.dirname(__file__) + '/templates/')
 
 urls = (
     "/", "hello",
@@ -36,10 +36,21 @@ class PostController(BaseController):
     model_class = model.PostModel
     
     def __init__(self):
-        pass
-    
-    
+        self.render = web.template.render(os.path.dirname(__file__) + '/templates/posts/')
 
+class UserController(BaseController):
+    model_class = model.UserModel
+    
+    def __init__(self):
+        self.render = web.template.render(os.path.dirname(__file__) + '/templates/users/')
+    
+class CategoryController(BaseController):
+    model_class = model.CategoryModel
+    
+    def __init__(self):
+        self.render = web.template.render(os.path.dirname(__file__) + '/templates/categories/')
+        
+        
 class hello(BaseController):
     def GET(self):
         name = 'Bob'
@@ -116,23 +127,18 @@ class edit_category(BaseController):
     def POST(self):
         return edit_model(self, model.CategoryModel, True)
       
-class article(BaseController):
+class article(PostController):
     def GET(self):
-        i = web.input(article_id=1)
-        article_id = i.article_id
-        post = model.PostModel.load(article_id)
-        page_content = render.article(post)
-        return self.render_page(page_content)
+        return view(self)
 
 
-class edit_user(BaseController):
+class edit_user(UserController):
     def GET(self):
         return edit_model(self, model.UserModel)
     
     def POST(self):
         return edit_model(self, model.UserModel, True)
     
-
 def edit_model(controller, model_class, submit = False):
     i = web.input(id=None)
     model_id = i.id
@@ -148,5 +154,15 @@ def edit_model(controller, model_class, submit = False):
     form_html = model_form.render()
     page_content = render.add(form_html = form_html)
     return controller.render_page(page_content)
+    
+    
 
+def view(controller):
+    i = web.input(id=1)
+    model_id = i.id
+    model_class = controller.model_class
+    inst = model_class.load(model_id)
+    page_content = controller.render.view(inst)
+    return controller.render_page(page_content)
+    
 application = web.application(urls, globals()).wsgifunc()
